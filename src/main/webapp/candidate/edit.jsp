@@ -1,7 +1,6 @@
-<%@ page import="ru.job4j.dream.model.Candidate" %>
-<%@ page import="ru.job4j.dream.store.Store" %>
-<%@ page import="ru.job4j.dream.store.PsqlStore" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page isELIgnored="false" %>
 
 <!doctype html>
 <html lang="en">
@@ -9,6 +8,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <c:set var="id" value="${requestScope.candidate.id}" scope="session"/>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
@@ -23,32 +23,35 @@
     <title>Работа мечты</title>
 </head>
 <body>
-<%
-    Store store = PsqlStore.instOf();
-    String id = request.getParameter("id");
-    Candidate can = new Candidate(0, "");
-    if (id != null) {
-        can = store.findCandidateByID(Integer.parseInt(id));
-    }
-%>
 <div class="container pt-3">
     <div class="row">
         <div class="card" style="width: 100%">
             <div class="card-header">
-                <% if (id == null) { %>
-                Новый кандидат.
-                <% } else { %>
-                Редактирование кандидата.
-                <% } %>
+                <c:if test="${requestScope.candidate.id == 0}">
+                    Новый кандидат.
+                </c:if>
+                <c:if test="${requestScope.candidate.id != 0}">
+                    Редактирование кандидата.
+                </c:if>
             </div>
             <div class="card-body">
-                <form action="<%=request.getContextPath()%>/candidates.do?id=<%=can.getId()%>" method="post">
-                    <div class="form-group">
-                        <label for="nameInput">Имя</label>
-                        <input id="nameInput" type="text" class="form-control" name="name" value="<%=can.getName()%>">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Сохранить</button>
-                </form>
+                <c:if test="${requestScope.candidate.id != 0}">
+                    <a href="editAvatar.jsp?id=${requestScope.candidate.id}">
+                        <img src="<c:url value='/candidate/download.do?id=${requestScope.candidate.id}'/>" width="200px" height="200px"/>
+                    </a>
+                </c:if>
+                    <form action="<c:url value="/candidates.do?id=${requestScope.candidate.id}"/>" method="post">
+                        <div class="form-group">
+                            <label for="nameInput">Имя</label>
+                            <input id="nameInput" type="text" class="form-control" name="name" value="${requestScope.candidate.name}">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                    </form>
+                <c:if test="${requestScope.candidate.id != 0}">
+                    <form action="delete.do?id=${requestScope.candidate.id}" method="post">
+                        <button type="submit" class="btn btn-primary">Удалить кандидата</button>
+                    </form>
+                </c:if>
             </div>
         </div>
     </div>

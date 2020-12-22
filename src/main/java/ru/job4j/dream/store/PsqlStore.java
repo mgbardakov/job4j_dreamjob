@@ -7,7 +7,9 @@ import ru.job4j.dream.model.Candidate;
 import ru.job4j.dream.model.Post;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,7 +24,7 @@ public class PsqlStore implements Store {
     private PsqlStore() {
         Properties cfg = new Properties();
         try (BufferedReader io = new BufferedReader(
-                new FileReader("db.properties")
+                new InputStreamReader(getClass().getClassLoader().getResourceAsStream("db.properties"))
         )) {
             cfg.load(io);
         } catch (Exception e) {
@@ -126,13 +128,14 @@ public class PsqlStore implements Store {
         Candidate rslCandidate = null;
         try (Connection cn = pool.getConnection();
              PreparedStatement ps =  cn.prepareStatement(
-                     "SELECT name FROM candidate WHERE id = ?")
+                     "SELECT name, photo_id FROM candidate WHERE id = ?")
         ) {
             ps.setInt(1, id);
             ps.execute();
             var rslSet = ps.getResultSet();
             if (rslSet.next()) {
-                rslCandidate = new Candidate(id, rslSet.getString(1));
+                rslCandidate = new Candidate(id, rslSet.getString("name"),
+                        Integer.parseInt(rslSet.getString("photo_id")));
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -204,4 +207,78 @@ public class PsqlStore implements Store {
         }
     }
 
+    @Override
+    public int registerPhotoID(int candidateID) {
+        int rslID = 0;
+        if (candidateID != 0) {
+            var photoID = findCandidateByID(candidateID).getPhotoID();
+            if (photoID != 0) {
+                rslID = photoID;
+            } else {
+                try (Connection cn = pool.getConnection();
+                     PreparedStatement ps =  cn.prepareStatement(
+                             "INSERT INTO photo DEFAULT VALUES",
+                             PreparedStatement.RETURN_GENERATED_KEYS)
+                ) {
+                    ps.execute();
+                    try (ResultSet id = ps.getGeneratedKeys()) {
+                        if (id.next()) {
+                            rslID = id.getInt(1);
+                            registerPhotoIDInCandidate(candidateID, rslID);
+                        }
+                    }
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+            }
+        }
+
+        return rslID;
+    }
+
+    private void registerPhotoIDInCandidate(int candidateID, int photoID) {
+        try (Connection cn = pool.getConnection();
+             PreparedStatement ps =  cn.prepareStatement(
+                     "UPDATE candidate SET photo_id = ? WHERE id = ?")
+        ) {
+            ps.setInt(1, photoID);
+            ps.setInt(2, candidateID);
+            ps.execute();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void deleteCandidateByID(int candidateID) {
+        var photoID = findCandidateByID(candidateID).getPhotoID();
+        try (Connection cn = pool.getConnection();
+             PreparedStatement ps =  cn.prepareStatement(
+                     "DELETE FROM candidate WHERE id = ?")
+        ) {
+            ps.setInt(1, candidateID);
+            ps.execute();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        deletePhotoID(photoID);
+        deletePhotoFromDisc(photoID);
+
+    }
+    private void deletePhotoID(int photoID) {
+        try (Connection cn = pool.getConnection();
+             PreparedStatement ps =  cn.prepareStatement(
+                     "DELETE FROM photo WHERE id = ?")
+        ) {
+            ps.setInt(1, photoID);
+            ps.execute();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+
+    private void deletePhotoFromDisc(int photoID) {
+        File file = new File(String.format("images%sphoto_%s.png", File.separator, photoID));
+        file.delete();
+    }
 }

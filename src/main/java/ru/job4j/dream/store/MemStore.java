@@ -68,4 +68,14 @@ public class MemStore implements Store {
     public Collection<Candidate> findAllCandidates() {
         return candidates.values();
     }
+
+    @Override
+    public int registerPhotoID(int candidateID) {
+        return 0;
+    }
+
+    @Override
+    public void deleteCandidateByID(int candidateID) {
+
+    }
 }

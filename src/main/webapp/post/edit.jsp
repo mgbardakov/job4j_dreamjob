@@ -1,7 +1,6 @@
-<%@ page import="ru.job4j.dream.model.Post" %>
-<%@ page import="ru.job4j.dream.store.Store" %>
-<%@ page import="ru.job4j.dream.store.PsqlStore" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page isELIgnored="false" %>
 
 <!doctype html>
 <html lang="en">
@@ -23,29 +22,22 @@
     <title>Работа мечты</title>
 </head>
 <body>
-<%
-    Store store = PsqlStore.instOf();
-    String id = request.getParameter("id");
-    Post post = new Post(0, "");
-    if (id != null) {
-        post = store.findPostByID(Integer.parseInt(id));
-    }
-%>
 <div class="container pt-3">
     <div class="row">
         <div class="card" style="width: 100%">
             <div class="card-header">
-                <% if (id == null) { %>
-                Новая вакансия.
-                <% } else { %>
-                Редактирование вакансии.
-                <% } %>
+                <c:if test="${requestScope.post.id == 0}">
+                    Новая вакансия.
+                </c:if>
+                <c:if test="${requestScope.post.id != 0}">
+                    Редактирование вакансии.
+                </c:if>
             </div>
             <div class="card-body">
-                <form action="<%=request.getContextPath()%>/posts.do?id=<%=post.getId()%>" method="post">
+                <form action="<c:url value="/posts.do?id=${requestScope.post.id}"/>" method="post">
                     <div class="form-group">
                         <label for="nameInput">Имя</label>
-                        <input id="nameInput" type="text" class="form-control" name="name" value="<%=post.getName()%>">
+                        <input id="nameInput" type="text" class="form-control" name="name" value="${requestScope.post.name}">
                     </div>
                     <button type="submit" class="btn btn-primary">Сохранить</button>
                 </form>
