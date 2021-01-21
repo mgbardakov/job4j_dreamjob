@@ -20,6 +20,7 @@ public class EditPostServlet extends HttpServlet {
             rslPost = PsqlStore.instOf().findPostByID(id);
         }
         req.setAttribute("post", rslPost);
+        req.setAttribute("user", req.getSession().getAttribute("user"));
         req.getRequestDispatcher("edit.jsp").forward(req, resp);
     }
 }

@@ -19,6 +19,7 @@ public class EditCandidateServlet extends HttpServlet {
             rslCan = PsqlStore.instOf().findCandidateByID(id);
         }
         req.setAttribute("candidate", rslCan);
+        req.setAttribute("user", req.getSession().getAttribute("user"));
         req.getRequestDispatcher("edit.jsp").forward(req, resp);
     }
 }
