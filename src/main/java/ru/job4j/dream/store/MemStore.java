@@ -1,7 +1,9 @@
 package ru.job4j.dream.store;
 
+import ru.job4j.dream.exception.NotImplementedException;
 import ru.job4j.dream.model.Candidate;
 import ru.job4j.dream.model.Post;
+import ru.job4j.dream.model.User;
 
 import java.util.Collection;
 import java.util.Map;
@@ -71,11 +73,26 @@ public class MemStore implements Store {
 
     @Override
     public int registerPhotoID(int candidateID) {
-        return 0;
+        throw new NotImplementedException();
     }
 
     @Override
     public void deleteCandidateByID(int candidateID) {
+        throw new NotImplementedException();
+    }
 
+    @Override
+    public void saveUser(User user) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public User findUserByID(int id) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public User findUserByEmail(String email) {
+        throw new NotImplementedException();
     }
 }

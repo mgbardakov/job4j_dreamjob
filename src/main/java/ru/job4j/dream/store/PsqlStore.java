@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.job4j.dream.model.Candidate;
 import ru.job4j.dream.model.Post;
+import ru.job4j.dream.model.User;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -280,5 +281,67 @@ public class PsqlStore implements Store {
     private void deletePhotoFromDisc(int photoID) {
         File file = new File(String.format("images%sphoto_%s.png", File.separator, photoID));
         file.delete();
+    }
+
+    @Override
+    public void saveUser(User user) {
+        try (Connection cn = pool.getConnection();
+             PreparedStatement ps =  cn.prepareStatement(
+                     "INSERT INTO user(name, email, password) VALUES (?, ?, ?)",
+                     PreparedStatement.RETURN_GENERATED_KEYS)
+        ) {
+            ps.setString(1, user.getName());
+            ps.setString(2, user.getEmail());
+            ps.setString(3, user.getPassword());
+            ps.execute();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public User findUserByID(int id) {
+        User user = null;
+        try (Connection cn = pool.getConnection();
+             PreparedStatement ps =  cn.prepareStatement(
+                     "SELECT id, name, email, password FROM user WHERE id = ?")
+        ) {
+            ps.setInt(1, id);
+            ps.execute();
+            var rslSet = ps.getResultSet();
+            if (rslSet.next()) {
+                user = new User();
+                user.setId(id);
+                user.setName(rslSet.getString("name"));
+                user.setEmail(rslSet.getString("email"));
+                user.setPassword(rslSet.getString("password"));
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return user;
+    }
+
+    @Override
+    public User findUserByEmail(String email) {
+        User user = null;
+        try (Connection cn = pool.getConnection();
+             PreparedStatement ps =  cn.prepareStatement(
+                     "SELECT id, name, email, password FROM user WHERE email = ?")
+        ) {
+            ps.setString(1, email);
+            ps.execute();
+            var rslSet = ps.getResultSet();
+            if (rslSet.next()) {
+                user = new User();
+                user.setId(rslSet.getInt("id"));
+                user.setName(rslSet.getString("name"));
+                user.setEmail(email);
+                user.setPassword(rslSet.getString("password"));
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return user;
     }
 }
