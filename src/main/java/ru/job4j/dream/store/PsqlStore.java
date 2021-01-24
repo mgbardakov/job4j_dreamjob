@@ -287,7 +287,7 @@ public class PsqlStore implements Store {
     public void saveUser(User user) {
         try (Connection cn = pool.getConnection();
              PreparedStatement ps =  cn.prepareStatement(
-                     "INSERT INTO user(name, email, password) VALUES (?, ?, ?)",
+                     "INSERT INTO users(name, email, password) VALUES (?, ?, ?)",
                      PreparedStatement.RETURN_GENERATED_KEYS)
         ) {
             ps.setString(1, user.getName());
@@ -304,7 +304,7 @@ public class PsqlStore implements Store {
         User user = null;
         try (Connection cn = pool.getConnection();
              PreparedStatement ps =  cn.prepareStatement(
-                     "SELECT id, name, email, password FROM user WHERE id = ?")
+                     "SELECT id, name, email, password FROM users WHERE id = ?")
         ) {
             ps.setInt(1, id);
             ps.execute();
@@ -327,7 +327,7 @@ public class PsqlStore implements Store {
         User user = null;
         try (Connection cn = pool.getConnection();
              PreparedStatement ps =  cn.prepareStatement(
-                     "SELECT id, name, email, password FROM user WHERE email = ?")
+                     "SELECT id, name, email, password FROM users WHERE email = ?")
         ) {
             ps.setString(1, email);
             ps.execute();

@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS post;
 DROP TABLE IF EXISTS candidate;
 DROP TABLE IF EXISTS photo;
-DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS users;
 CREATE TABLE photo (
     id SERIAL PRIMARY KEY
 );
@@ -16,7 +16,7 @@ CREATE TABLE candidate (
 );
 INSERT INTO photo (id)
 VALUES (0);
-CREATE TABLE user (
+CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   name TEXT,
   email TEXT,
