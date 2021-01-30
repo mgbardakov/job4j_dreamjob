@@ -14,21 +14,21 @@ public class MemStore implements Store {
 
     private static final MemStore INST = new MemStore();
 
-    private static final AtomicInteger POST_ID = new AtomicInteger(4);
+    private static final AtomicInteger POST_ID = new AtomicInteger(1);
 
-    private static final AtomicInteger CANDIDATE_ID = new AtomicInteger(4);
+    private static final AtomicInteger CANDIDATE_ID = new AtomicInteger(1);
+
+    private static final AtomicInteger USER_ID = new AtomicInteger(1);
+
+    private static final AtomicInteger PHOTO_ID = new AtomicInteger(1);
 
     private final Map<Integer, Post> posts = new ConcurrentHashMap<>();
 
     private final Map<Integer, Candidate> candidates = new ConcurrentHashMap<>();
 
+    private final Map<Integer, User> users = new ConcurrentHashMap<>();
+
     private MemStore() {
-        posts.put(1, new Post(1, "Junior Java Job"));
-        posts.put(2, new Post(2, "Middle Java Job"));
-        posts.put(3, new Post(3, "Senior Java Job"));
-        candidates.put(1, new Candidate(1, "Junior Java"));
-        candidates.put(2, new Candidate(2, "Middle Java"));
-        candidates.put(3, new Candidate(3, "Senior Java"));
     }
 
     public static MemStore instOf() {
@@ -38,7 +38,7 @@ public class MemStore implements Store {
     @Override
     public void savePost(Post post) {
         if (post.getId() == 0) {
-            post.setId(POST_ID.incrementAndGet());
+            post.setId(POST_ID.getAndIncrement());
         }
         posts.put(post.getId(), post);
     }
@@ -46,7 +46,7 @@ public class MemStore implements Store {
     @Override
     public void saveCandidate(Candidate candidate) {
         if (candidate.getId() == 0) {
-            candidate.setId(CANDIDATE_ID.incrementAndGet());
+            candidate.setId(CANDIDATE_ID.getAndIncrement());
         }
         candidates.put(candidate.getId(), candidate);
     }
@@ -73,26 +73,29 @@ public class MemStore implements Store {
 
     @Override
     public int registerPhotoID(int candidateID) {
-        throw new NotImplementedException();
+        var rsl = PHOTO_ID.getAndIncrement();
+        candidates.get(candidateID).setPhotoID(rsl);
+        return rsl;
     }
 
     @Override
     public void deleteCandidateByID(int candidateID) {
-        throw new NotImplementedException();
+        candidates.remove(candidateID);
     }
 
     @Override
     public void saveUser(User user) {
-        throw new NotImplementedException();
+        users.put(USER_ID.getAndIncrement(), user);
     }
 
     @Override
     public User findUserByID(int id) {
-        throw new NotImplementedException();
+        return users.get(id);
     }
 
     @Override
     public User findUserByEmail(String email) {
-        throw new NotImplementedException();
+        return users.values().stream().filter(x -> x.getEmail()
+                    .equals(email)).findAny().orElse(null);
     }
 }
