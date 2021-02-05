@@ -7,6 +7,22 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        function validate() {
+            let fieldIDs = ['firstName', 'lastName', 'desc']
+            let message = '';
+            fieldIDs.forEach(element => {
+                let field = $(`#${element}`);
+                if (field.val() === '') {
+                    message = message + `Insert field: ${field.attr('title')}\n`;
+                }
+            })
+            if (message !== '') {
+                alert(message)
+            }
+            return false;
+          }
+    </script>
 </head>
 <body>
 
@@ -14,11 +30,11 @@
     <form action="">
         <div class="form-group">
             <label for="firstName">First name:</label>
-            <input type="text" class="form-control" id="firstName">
+            <input type="text" class="form-control" id="firstName" title="First name">
         </div>
         <div class="form-group">
             <label for="lastName">Last name:</label>
-            <input type="password" class="form-control" id="lastName">
+            <input type="text" class="form-control" id="lastName" title="Last name">
         </div>
         <div class="form-group">
             <label class="radio-inline"><input type="radio" name="sex" checked>Male</label>
@@ -26,9 +42,9 @@
         </div>
         <div class="form-group">
             <label for="desc">Description:</label>
-            <textarea class="form-control" rows="5" id="desc"></textarea>
+            <textarea class="form-control" rows="5" id="desc" title="Description"></textarea>
         </div>
-        <button type="submit" class="btn btn-default">Submit</button>
+        <button type="submit" class="btn btn-default" onclick="validate()">Submit</button>
     </form>
     <table class="table table-striped">
         <thead>
