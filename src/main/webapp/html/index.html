@@ -9,7 +9,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script>
         function validate() {
-            let fieldIDs = ['firstName', 'lastName', 'desc']
+            let fieldIDs = ['firstName', 'lastName', 'desc'];
             let message = '';
             fieldIDs.forEach(element => {
                 let field = $(`#${element}`);
@@ -18,16 +18,35 @@
                 }
             })
             if (message !== '') {
-                alert(message)
+                alert(message);
             }
             return false;
+          }
+
+          function addRow() {
+            validate();
+            let rslString = '<tr>';
+              $("form#userForm :input").each(function(){
+                  if ($(this).attr('type') !== 'radio'
+                      || $(this).is(':checked')) {
+                      let value = '';
+                      if ($(this).attr('type') !== 'radio') {
+                          value = $(this).val();
+                      } else {
+                          value = $("label[for='" + $(this).attr('id') + "']").text();
+                      }
+                      rslString += '<td>' + value +'</td>';
+                  }
+              });
+              rslString += '</tr>'
+            $('#table tr:last').after(rslString);
           }
     </script>
 </head>
 <body>
 
 <div class="container-fluid">
-    <form action="">
+    <form action="" id="userForm">
         <div class="form-group">
             <label for="firstName">First name:</label>
             <input type="text" class="form-control" id="firstName" title="First name">
@@ -37,16 +56,16 @@
             <input type="text" class="form-control" id="lastName" title="Last name">
         </div>
         <div class="form-group">
-            <label class="radio-inline"><input type="radio" name="sex" checked>Male</label>
-            <label class="radio-inline"><input type="radio" name="sex">Female</label>
+            <label for="male" class="radio-inline"><input type="radio" id="male" name="sex" checked>Male</label>
+            <label for="female" class="radio-inline"><input type="radio" id="female" name="sex">Female</label>
         </div>
         <div class="form-group">
             <label for="desc">Description:</label>
             <textarea class="form-control" rows="5" id="desc" title="Description"></textarea>
         </div>
-        <button type="submit" class="btn btn-default" onclick="validate()">Submit</button>
+        <button type="button" class="btn btn-default" onclick="addRow()">Submit</button>
     </form>
-    <table class="table table-striped">
+    <table class="table table-striped" id="table">
         <thead>
         <tr>
             <th>Firstname</th>
@@ -56,12 +75,6 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-        </tr>
         </tbody>
     </table>
 </div>
