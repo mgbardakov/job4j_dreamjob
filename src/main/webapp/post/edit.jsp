@@ -53,7 +53,7 @@
                 </c:if>
             </div>
             <div class="card-body">
-                <form action="<c:url value="/posts.do?id=${requestScope.post.id}"/>" method="post">
+                <form action="<c:url value="/posts.do?id=${requestScope.post.id}"/>" method="post" onsubmit="return validateInput()">
                     <div class="form-group">
                         <label for="nameInput">Имя</label>
                         <input id="nameInput" type="text" class="form-control" name="name" value="${requestScope.post.name}">
@@ -63,6 +63,7 @@
             </div>
         </div>
     </div>
+    <script src="../edit.js"></script>
 </div>
 </body>
 </html>

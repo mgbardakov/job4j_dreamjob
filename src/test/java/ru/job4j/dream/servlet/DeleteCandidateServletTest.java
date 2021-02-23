@@ -28,7 +28,7 @@ public class DeleteCandidateServletTest {
     @Test
     public void whenDeleteUserThenNull() throws ServletException, IOException {
         Store memStore = MemStore.instOf();
-        memStore.saveCandidate(new Candidate(0, "Nick Vujicic"));
+        memStore.saveCandidate(new Candidate(0, "Nick Vujicic", 0));
         PowerMockito.mockStatic(PsqlStore.class);
         when(PsqlStore.instOf()).thenReturn(memStore);
         HttpServletRequest req = mock(HttpServletRequest.class);

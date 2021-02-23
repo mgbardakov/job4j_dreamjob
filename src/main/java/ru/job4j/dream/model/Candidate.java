@@ -5,15 +5,17 @@ import java.util.Objects;
 public class Candidate {
     private int id;
     private String name;
+    private int cityID;
     private int photoID;
 
-    public Candidate(int id, String name) {
-        this(id, name, 0);
+    public Candidate(int id, String name, int cityID) {
+        this(id, name, cityID, 0);
     }
 
-    public Candidate(int id, String name, int photoID) {
+    public Candidate(int id, String name, int cityID, int photoID) {
         this.id = id;
         this.name = name;
+        this.cityID = cityID;
         this.photoID = photoID;
     }
 
@@ -39,6 +41,14 @@ public class Candidate {
 
     public void setPhotoID(int photoID) {
         this.photoID = photoID;
+    }
+
+    public void setCityID(int cityID) {
+        this.cityID = cityID;
+    }
+
+    public int getCityID() {
+        return cityID;
     }
 
     @Override

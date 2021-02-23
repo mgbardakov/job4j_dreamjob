@@ -56,6 +56,10 @@
     <servlet-name>GreetingServlet</servlet-name>
     <servlet-class>ru.job4j.dream.servlet.GreetingServlet</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>CityListServlet</servlet-name>
+    <servlet-class>ru.job4j.dream.servlet.CityListServlet</servlet-class>
+  </servlet>
   <servlet-mapping>
     <servlet-name>PostServlet</servlet-name>
     <url-pattern>/posts.do</url-pattern>
@@ -99,5 +103,9 @@
   <servlet-mapping>
     <servlet-name>GreetingServlet</servlet-name>
     <url-pattern>/greet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>CityListServlet</servlet-name>
+    <url-pattern>/cities.do</url-pattern>
   </servlet-mapping>
 </web-app>

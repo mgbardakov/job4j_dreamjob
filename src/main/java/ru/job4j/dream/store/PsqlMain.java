@@ -12,7 +12,7 @@ public class PsqlMain {
         }
         var post = store.findPostByID(1);
         System.out.println(post.getId() + " " + post.getName());
-        store.saveCandidate(new Candidate(0, "Java Junior"));
+        store.saveCandidate(new Candidate(0, "Java Junior", 1));
         for (Candidate can : store.findAllCandidates()) {
             System.out.println(can.getId() + " " + can.getName());
         }

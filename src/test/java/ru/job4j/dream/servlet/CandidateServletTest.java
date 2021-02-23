@@ -2,7 +2,6 @@ package ru.job4j.dream.servlet;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -35,6 +34,7 @@ public class CandidateServletTest {
             HttpServletResponse resp = mock(HttpServletResponse.class);
             when(req.getParameter("id")).thenReturn("0");
             when(req.getParameter("name")).thenReturn("Nick Vujicic");
+            when(req.getParameter("city_id")).thenReturn("0");
             new CandidateServlet().doPost(req, resp);
             assertThat(memStore.findAllCandidates().iterator().next().getName(), is("Nick Vujicic"));
         }

@@ -59,10 +59,14 @@
                         <img src="<c:url value='/candidate/download.do?id=${requestScope.candidate.id}'/>" width="200px" height="200px"/>
                     </a>
                 </c:if>
-                    <form action="<c:url value="/candidates.do?id=${requestScope.candidate.id}"/>" method="post">
+                    <form action="<c:url value="/candidates.do?id=${requestScope.candidate.id}"/>" method="post" onsubmit="return validateInput()">
                         <div class="form-group">
                             <label for="nameInput">Имя</label>
                             <input id="nameInput" type="text" class="form-control" name="name" value="${requestScope.candidate.name}">
+                        </div>
+                        <div class="form-group">
+                        <label for="cities">Город</label>
+                        <select class="form-select" aria-label="Default select example" id="cities" name="city_id"></select>
                         </div>
                         <button type="submit" class="btn btn-primary">Сохранить</button>
                     </form>
@@ -74,6 +78,9 @@
             </div>
         </div>
     </div>
+    <input type="hidden" id="xID" name="x" value="${requestScope.candidate.cityID}">
 </div>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" ></script>
+<script src="../edit.js"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 package ru.job4j.dream.store;
 
-import ru.job4j.dream.exception.NotImplementedException;
 import ru.job4j.dream.model.Candidate;
+import ru.job4j.dream.model.City;
 import ru.job4j.dream.model.Post;
 import ru.job4j.dream.model.User;
 
@@ -96,6 +96,11 @@ public class MemStore implements Store {
     @Override
     public User findUserByEmail(String email) {
         return users.values().stream().filter(x -> x.getEmail()
-                    .equals(email)).findAny().orElse(null);
+                .equals(email)).findAny().orElse(null);
+    }
+
+    @Override
+    public Collection<City> getAllCities() {
+        return null;
     }
 }
