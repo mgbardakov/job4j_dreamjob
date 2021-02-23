@@ -13,7 +13,7 @@ public class EditCandidateServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Candidate rslCan = new Candidate(0, "");
+        Candidate rslCan = new Candidate(0, "", 0);
         if(req.getParameter("id") != null) {
             var id = Integer.parseInt(req.getParameter("id"));
             rslCan = PsqlStore.instOf().findCandidateByID(id);

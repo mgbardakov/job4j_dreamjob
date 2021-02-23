@@ -4,6 +4,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.job4j.dream.model.Candidate;
+import ru.job4j.dream.model.City;
 import ru.job4j.dream.model.Post;
 import ru.job4j.dream.model.User;
 
@@ -78,7 +79,9 @@ public class PsqlStore implements Store {
         ) {
             try (ResultSet it = ps.executeQuery()) {
                 while (it.next()) {
-                    cans.add(new Candidate(it.getInt("id"), it.getString("name")));
+                    cans.add(new Candidate(it.getInt("id"),
+                            it.getString("name"),
+                            it.getInt("city_id")));
                 }
             }
         } catch (Exception e) {
@@ -129,14 +132,15 @@ public class PsqlStore implements Store {
         Candidate rslCandidate = null;
         try (Connection cn = pool.getConnection();
              PreparedStatement ps =  cn.prepareStatement(
-                     "SELECT name, photo_id FROM candidate WHERE id = ?")
+                     "SELECT name, photo_id, city_id FROM candidate WHERE id = ?")
         ) {
             ps.setInt(1, id);
             ps.execute();
             var rslSet = ps.getResultSet();
             if (rslSet.next()) {
                 rslCandidate = new Candidate(id, rslSet.getString("name"),
-                        Integer.parseInt(rslSet.getString("photo_id")));
+                        rslSet.getInt("city_id"),
+                        rslSet.getInt("photo_id"));
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -179,10 +183,11 @@ public class PsqlStore implements Store {
     private Candidate createCandidate(Candidate candidate) {
         try (Connection cn = pool.getConnection();
              PreparedStatement ps =  cn.prepareStatement(
-                     "INSERT INTO candidate(name) VALUES (?)",
+                     "INSERT INTO candidate(name, city_id) VALUES (?, ?)",
                      PreparedStatement.RETURN_GENERATED_KEYS)
         ) {
             ps.setString(1, candidate.getName());
+            ps.setInt(2, candidate.getCityID());
             ps.execute();
             try (ResultSet id = ps.getGeneratedKeys()) {
                 if (id.next()) {
@@ -198,10 +203,11 @@ public class PsqlStore implements Store {
     private void updateCandidate(Candidate candidate) {
         try (Connection cn = pool.getConnection();
              PreparedStatement ps =  cn.prepareStatement(
-                     "UPDATE post SET name = ? WHERE id = ?")
+                     "UPDATE candidate SET name = ?, city_id = ? WHERE id = ?")
         ) {
             ps.setString(1, candidate.getName());
-            ps.setInt(2, candidate.getId());
+            ps.setInt(2, candidate.getCityID());
+            ps.setInt(3, candidate.getId());
             ps.execute();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -262,9 +268,10 @@ public class PsqlStore implements Store {
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        deletePhotoID(photoID);
-        deletePhotoFromDisc(photoID);
-
+        if (photoID != 0) {
+            deletePhotoID(photoID);
+            deletePhotoFromDisc(photoID);
+        }
     }
     private void deletePhotoID(int photoID) {
         try (Connection cn = pool.getConnection();
@@ -343,5 +350,23 @@ public class PsqlStore implements Store {
             LOGGER.error(e.getMessage(), e);
         }
         return user;
+    }
+
+    @Override
+    public Collection<City> getAllCities() {
+        List<City> cities = new ArrayList<>();
+        try (Connection cn = pool.getConnection();
+             PreparedStatement ps =  cn.prepareStatement("SELECT * FROM cities")
+        ) {
+            try (ResultSet it = ps.executeQuery()) {
+                while (it.next()) {
+                    cities.add(new City(it.getInt("id"),
+                            it.getString("name")));
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return cities;
     }
 }
