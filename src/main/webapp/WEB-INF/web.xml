@@ -18,7 +18,7 @@
   </filter-mapping>
   <filter-mapping>
     <filter-name>CORSFilter</filter-name>
-    <url-pattern>*.do</url-pattern>
+    <url-pattern>/*</url-pattern>
   </filter-mapping>
   <servlet>
     <servlet-name>PostServlet</servlet-name>
@@ -114,6 +114,6 @@
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>CityListServlet</servlet-name>
-    <url-pattern>/cities.do</url-pattern>
+    <url-pattern>/cities.json</url-pattern>
   </servlet-mapping>
 </web-app>

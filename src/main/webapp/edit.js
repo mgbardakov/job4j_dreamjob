@@ -2,7 +2,7 @@ function getCities() {
     $.ajax({
         type: 'GET',
         crossdomain: false,
-        url: "http://localhost:8080/dreamjob/cities.do",
+        url: "http://localhost:8080/dreamjob/cities.json",
         dataType: 'json'
     }).done(function(incomeData) {
         addCities(incomeData);
